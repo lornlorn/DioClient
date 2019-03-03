@@ -19,12 +19,6 @@ func TestHandler(res http.ResponseWriter, req *http.Request) {
 
 	seelog.Infof("Router Test : %v", req.URL)
 
-	if req.URL.Path == "/favicon.ico" {
-		seelog.Debugf("Request A favicon [%v]", "./assets/img/favicon.ico")
-		http.ServeFile(res, req, "./assets/img/favicon.ico")
-		return
-	}
-
 	tmpl, err := template.ParseFiles("./views/test/test.html")
 	if err != nil {
 		seelog.Errorf("template.ParseFiles Error : %v", err)
@@ -90,8 +84,8 @@ func NotFoundHandler(res http.ResponseWriter, req *http.Request) {
 	seelog.Infof("Router 404 : %v", req.URL)
 
 	if req.URL.Path == "/favicon.ico" {
-		seelog.Debugf("Request A favicon [%v]", "./static/img/favicon.ico")
-		http.ServeFile(res, req, "./static/img/favicon.ico")
+		seelog.Debugf("Request A favicon [%v]", "./assets/img/favicon.ico")
+		http.ServeFile(res, req, "./assets/img/favicon.ico")
 		return
 	}
 

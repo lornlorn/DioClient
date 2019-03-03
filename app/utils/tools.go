@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bufio"
+	"bytes"
 	"crypto/md5"
 	"crypto/rand"
 	"encoding/base64"
@@ -9,13 +10,13 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"strings"
 
 	seelog "github.com/cihub/seelog"
-	"github.com/gorilla/mux"
 	"github.com/tidwall/gjson"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 )
 
 /*
@@ -46,20 +47,6 @@ ReadJSONData2Array func(reqBody []byte, path string) []gjson.Result
 func ReadJSONData2Array(reqBody []byte, path string) []gjson.Result {
 	j := gjson.Get(string(reqBody), path)
 	return j.Array()
-}
-
-/*
-GetMuxVarsFromRequest func(req *http.Request, key string) string
-*/
-func GetMuxVarsFromRequest(req *http.Request, key string) string {
-	return mux.Vars(req)[key]
-}
-
-/*
-GetParamFromRequest func(req *http.Request, param string) string
-*/
-func GetParamFromRequest(req *http.Request, param string) string {
-	return req.URL.Query()[param][0]
 }
 
 /*
@@ -148,4 +135,15 @@ func GetUniqueID() string {
 
 	return GetMd5String(base64.URLEncoding.EncodeToString(newbyte))
 
+}
+
+// DecodeGBK2UTF8 GBK转UTF8
+func DecodeGBK2UTF8(in []byte) ([]byte, error) {
+	I := bytes.NewReader(in)
+	O := transform.NewReader(I, simplifiedchinese.GBK.NewDecoder())
+	d, e := ioutil.ReadAll(O)
+	if e != nil {
+		return nil, e
+	}
+	return d, nil
 }

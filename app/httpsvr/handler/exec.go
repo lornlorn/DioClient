@@ -6,6 +6,7 @@ import (
 	"app/utils"
 	"fmt"
 	"net/http"
+	"runtime"
 	"strings"
 	"time"
 
@@ -61,14 +62,29 @@ func ExecuteHandler(res http.ResponseWriter, req *http.Request) {
 		sysLog.RunMsg = err.Error()
 		ret = utils.GetAjaxRetJSON("9999", err)
 	} else {
-		seelog.Debugf("执行结果 : %v", string(output))
+		switch runtime.GOOS {
+		case "darwin":
+		case "windows":
+		case "linux":
+		}
+		var result []byte
+		if runtime.GOOS == "windows" {
+			seelog.Debug("Decode GBK to UTF-8 ...")
+			result, err = utils.DecodeGBK2UTF8(output)
+			if err != nil {
+				seelog.Errorf("Decode GBK to UTF-8 Error : %v", err.Error())
+			}
+		} else {
+			result = output
+		}
+		seelog.Debugf("执行结果 : %v", string(result))
 		logFileNameTime := nowTime.Format(logFileFormat)
 		UUID := utils.GetUniqueID()
 		logFileDir := utils.GetConfig("app", "logdir")
 		logFileName := fmt.Sprintf("%v-%v", logFileNameTime, UUID)
 		logFilePath := fmt.Sprintf("%v/%v.log", logFileDir, logFileName)
-		seelog.Debugf("执行结果日志 : %v", logFilePath)
-		err := utils.WriteFile(logFilePath, string(output))
+		seelog.Debugf("写入执行结果日志 : %v", logFilePath)
+		err := utils.WriteFile(logFilePath, string(result))
 		if err != nil {
 			seelog.Errorf("执行结果日志写入失败 : %v", err.Error())
 			sysLog.LogfilePath = fmt.Sprintf("执行结果日志写入失败 : %v", err.Error())
@@ -76,9 +92,9 @@ func ExecuteHandler(res http.ResponseWriter, req *http.Request) {
 			sysLog.LogfilePath = logFilePath
 		}
 		sysLog.RunStatus = "成功"
-		sysLog.RunMsg = string(output)
+		sysLog.RunMsg = string(result)
 
-		ret = utils.GetAjaxRetWithDataJSON("0000", nil, string(output))
+		ret = utils.GetAjaxRetWithDataJSON("0000", nil, string(result))
 	}
 
 	err = sysLog.Save()
