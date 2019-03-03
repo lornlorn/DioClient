@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Test</title>
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/test.js"></script>
+</head>
+
+<body>
+    <div>
+        <label>环境变量1</label><input type="text" id="env1" value="TEST1=AAA" />
+        <label>环境变量2</label><input type="text" id="env2" value="TEST2=BBB" />
+    </div>
+    <div>
+        <label>命令</label><input type="text" id="cmd" value=".\data\cmd\test.bat" />
+    </div>
+    <div>
+        <label>参数1</label><input type="text" id="arg1" value="Hello" />
+        <label>参数2</label><input type="text" id="arg2" value="World" />
+    </div>
+    <div>
+        <button id="submit">提交</button>
+    </div>
+    <div>
+        <label>返回</label><textarea type="text" id="ret" rows="5"></textarea>
+    </div>
+</body>
+
+</html>
