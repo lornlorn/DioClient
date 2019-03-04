@@ -18,6 +18,7 @@ type SysLog struct {
 	RunStatus   string `xorm:"VARCHAR(16)   NOT NULL"`
 	RunMsg      string `xorm:"VARCHAR(512)"`
 	LogfilePath string `xorm:"VARCHAR(512)   NOT NULL"`
+	ReqSrc      string `xorm:"VARCHAR(32)   NOT NULL"`
 }
 
 /*
@@ -31,6 +32,7 @@ type NewLog struct {
 	RunStatus   string `xorm:"VARCHAR(16)   NOT NULL"`
 	RunMsg      string `xorm:"VARCHAR(512)"`
 	LogfilePath string `xorm:"VARCHAR(512)   NOT NULL"`
+	ReqSrc      string `xorm:"VARCHAR(32)   NOT NULL"`
 }
 
 /*

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"app/api"
 	"app/models"
 	"app/scheduler"
 	"app/utils"
@@ -42,7 +43,6 @@ func ExecuteHandler(res http.ResponseWriter, req *http.Request) {
 
 	nowTime := time.Now()
 	timeFormat := "2006-01-02 15:04:05" // 时间格式化模板
-	logFileFormat := "20060102150405"   // 日志文件命名时间格式化
 	// dateFormat := "20060102"            // 时间格式化模板
 	// nowDataStr := nowTime.Format(dateFormat)
 	nowTimeStr := nowTime.Format(timeFormat)
@@ -52,6 +52,7 @@ func ExecuteHandler(res http.ResponseWriter, req *http.Request) {
 		RunEnvs: strings.Trim(fmt.Sprint(es), "[]"),
 		RunCmd:  cmd.String(),
 		RunArgs: strings.Trim(fmt.Sprint(as), "[]"),
+		ReqSrc:  "http",
 	}
 
 	var ret []byte
@@ -62,35 +63,25 @@ func ExecuteHandler(res http.ResponseWriter, req *http.Request) {
 		sysLog.RunMsg = err.Error()
 		ret = utils.GetAjaxRetJSON("9999", err)
 	} else {
-		switch runtime.GOOS {
-		case "darwin":
-		case "windows":
-		case "linux":
-		}
 		var result []byte
 		if runtime.GOOS == "windows" {
 			seelog.Debug("Decode GBK to UTF-8 ...")
 			result, err = utils.DecodeGBK2UTF8(output)
 			if err != nil {
 				seelog.Errorf("Decode GBK to UTF-8 Error : %v", err.Error())
+				result = output
 			}
 		} else {
 			result = output
 		}
 		seelog.Debugf("执行结果 : %v", string(result))
-		logFileNameTime := nowTime.Format(logFileFormat)
-		UUID := utils.GetUniqueID()
-		logFileDir := utils.GetConfig("app", "logdir")
-		logFileName := fmt.Sprintf("%v-%v", logFileNameTime, UUID)
-		logFilePath := fmt.Sprintf("%v/%v.log", logFileDir, logFileName)
-		seelog.Debugf("写入执行结果日志 : %v", logFilePath)
-		err := utils.WriteFile(logFilePath, string(result))
+		logFilePath, err := api.WriteRunLog2File(nowTime, cmd.String(), string(result))
 		if err != nil {
-			seelog.Errorf("执行结果日志写入失败 : %v", err.Error())
 			sysLog.LogfilePath = fmt.Sprintf("执行结果日志写入失败 : %v", err.Error())
 		} else {
 			sysLog.LogfilePath = logFilePath
 		}
+
 		sysLog.RunStatus = "成功"
 		sysLog.RunMsg = string(result)
 

@@ -8,6 +8,7 @@ echo %1
 echo %2
 
 REM choice /t 10 /c YN /d Y
+Wscript sleep.vbs
 echo ===============
 
 echo %TEST1%
