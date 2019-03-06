@@ -26,7 +26,7 @@ func Execute(src string, uuid string, command string, envs []string, args ...str
 		RunArgs: strings.Trim(fmt.Sprint(args), "[]"),
 		ReqSrc:  src,
 	}
-	output, err := Run(command, envs, args...)
+	output, beginTimeStr, endTimeStr, err := Run(command, envs, args...)
 	if err != nil {
 		sysLog.RunStatus = "失败"
 		sysLog.RunMsg = err.Error()
@@ -44,7 +44,7 @@ func Execute(src string, uuid string, command string, envs []string, args ...str
 		result = output
 	}
 
-	logFilePath, err := api.WriteRunLog2File(uuid, string(result))
+	logFilePath, err := api.WriteRunLog2File(uuid, result, beginTimeStr, endTimeStr)
 	if err != nil {
 		seelog.Errorf("执行结果日志写入失败 : %v", err.Error())
 		sysLog.LogfilePath = fmt.Sprintf("执行结果日志写入失败 : %v", err.Error())
@@ -65,9 +65,13 @@ func Execute(src string, uuid string, command string, envs []string, args ...str
 }
 
 /*
-Run func(command string, args ...string) ([]byte, error)
+Run func(command string, args ...string) ([]byte, string, string, error)
 */
-func Run(command string, envs []string, args ...string) ([]byte, error) {
+func Run(command string, envs []string, args ...string) ([]byte, string, string, error) {
+	timeFormat := "2006-01-02 15:04:05" // 时间格式化模板
+	beginTime := time.Now()
+	beginTimeStr := beginTime.Format(timeFormat)
+
 	// 执行
 	cmd := exec.Command(command, args...)
 	cmd.Env = envs
@@ -75,11 +79,11 @@ func Run(command string, envs []string, args ...string) ([]byte, error) {
 	output, err := cmd.StdoutPipe()
 	// output, err := cmd.CombinedOutput()
 	if err != nil {
-		return nil, err
+		return nil, "", "", err
 	}
 
 	if err = cmd.Start(); err != nil {
-		return nil, err
+		return nil, "", "", err
 	}
 
 	var out = make([]byte, 0, 1024)
@@ -93,8 +97,11 @@ func Run(command string, envs []string, args ...string) ([]byte, error) {
 	}
 
 	if err = cmd.Wait(); err != nil {
-		return nil, err
+		return nil, "", "", err
 	}
 
-	return out, nil
+	endTime := time.Now()
+	endTimeStr := endTime.Format(timeFormat)
+
+	return out, beginTimeStr, endTimeStr, nil
 }

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"app/scheduler"
 	"app/utils"
 	"html/template"
 	"net/http"
@@ -40,36 +39,7 @@ func TestAjaxHandler(res http.ResponseWriter, req *http.Request) {
 	reqURL := req.URL.Query()
 	seelog.Debugf("Request Params : %v", reqURL)
 
-	/*
-		var retdata []byte
-		switch key {
-
-		default:
-		}
-	*/
-	envs := utils.ReadJSONData2Array(reqBody, "data.envs")
-	cmd := utils.GetJSONResultFromRequestBody(reqBody, "data.cmd")
-	args := utils.ReadJSONData2Array(reqBody, "data.args")
-
-	var es []string
-	for _, env := range envs {
-		es = append(es, env.String())
-	}
-	var as []string
-	for _, arg := range args {
-		as = append(as, arg.String())
-	}
-
-	seelog.Debugf("[%v][%v][%v]", es, cmd, as)
-	output, err := scheduler.Run(cmd.String(), es, as...)
-	if err != nil {
-		seelog.Errorf("Command Run Error : %v", err.Error())
-		res.Write(utils.GetAjaxRetJSON("9999", err))
-		return
-	}
-
-	seelog.Debug(string(output))
-	res.Write(utils.GetAjaxRetWithDataJSON("0000", nil, string(output)))
+	res.Write(utils.GetAjaxRetJSON("0000", nil))
 	return
 }
 
