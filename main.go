@@ -2,6 +2,7 @@ package main
 
 import (
 	"app/httpsvr"
+	"app/scheduler"
 	"app/utils"
 	"log"
 	"net/http"
@@ -64,15 +65,14 @@ func main() {
 	defer utils.Engine.Close()
 	seelog.Infof("%v Success !", msg)
 
-	/*
-		// Start Monitor
-		log.Println("Scheduler Start ...")
-		err = scheduler.Start()
-		if err != nil {
-			log.Printf("Scheduler Start Fail : %v", err)
-			return
-		}
-	*/
+	// Start Cron
+	msg = "Start Cron ..."
+	err = scheduler.InitCron()
+	if err != nil {
+		seelog.Criticalf("%v Error : %v", msg, err.Error())
+		panic("Exit!")
+	}
+	seelog.Infof("%v Success !", msg)
 
 	// Start HTTP Server
 	msg = "5 -> Starting HTTP Server"

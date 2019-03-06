@@ -34,7 +34,7 @@ func StartHTTP() error {
 func initRoutes(r *mux.Router) {
 
 	r.HandleFunc("/exec", handler.ExecuteHandler).Methods("POST")
-	r.HandleFunc("/cron", handler.CronHandler).Methods("POST")
+	r.HandleFunc("/cron", handler.CronAddHandler).Methods("POST")
 	r.HandleFunc("/test", handler.TestHandler).Methods("GET")
 	r.HandleFunc("/test/ajax", handler.TestAjaxHandler).Methods("POST")
 

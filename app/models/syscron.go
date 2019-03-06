@@ -18,6 +18,7 @@ type SysCron struct {
 	CronArgs   string `xorm:"VARCHAR(512)"`
 	CronStatus string `xorm:"VARCHAR(16)   NOT NULL"`
 	CronDesc   string `xorm:"VARCHAR(1024)"`
+	CronUuid   string `xorm:"VARCHAR(32) NOT NULL UNIQUE"`
 }
 
 /*
@@ -31,6 +32,7 @@ type NewCron struct {
 	CronArgs   string `xorm:"VARCHAR(512)"`
 	CronStatus string `xorm:"VARCHAR(16)   NOT NULL"`
 	CronDesc   string `xorm:"VARCHAR(1024)"`
+	CronUuid   string `xorm:"VARCHAR(32) NOT NULL UNIQUE"`
 }
 
 /*
@@ -50,4 +52,18 @@ func (cron NewCron) Save() error {
 	seelog.Debugf("%v insert : %v", affected, cron)
 
 	return nil
+}
+
+/*
+GetCrons func() ([]SysCron, error)
+*/
+func GetCrons() ([]SysCron, error) {
+	crons := make([]SysCron, 0)
+
+	if err := utils.Engine.Find(&crons); err != nil {
+		// seelog.Errorf("utils.Engine.Find Error : %v", err)
+		return nil, err
+	}
+
+	return crons, nil
 }
