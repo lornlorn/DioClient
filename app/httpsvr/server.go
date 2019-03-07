@@ -35,6 +35,7 @@ func initRoutes(r *mux.Router) {
 
 	r.HandleFunc("/exec", handler.ExecuteHandler).Methods("POST")
 	r.HandleFunc("/cron", handler.CronAddHandler).Methods("POST")
+	r.HandleFunc("/cron", handler.CronDeleteHandler).Methods("DELETE")
 	r.HandleFunc("/test", handler.TestHandler).Methods("GET")
 	r.HandleFunc("/test/ajax", handler.TestAjaxHandler).Methods("POST")
 

@@ -54,6 +54,17 @@ func (cron NewCron) Save() error {
 	return nil
 }
 
+// Delete method
+func (cron NewCron) Delete() error {
+	affected, err := utils.Engine.Delete(cron)
+	if err != nil {
+		return err
+	}
+	seelog.Debugf("%v delete : %v", affected, cron)
+
+	return nil
+}
+
 /*
 GetCrons func() ([]SysCron, error)
 */
@@ -66,4 +77,23 @@ func GetCrons() ([]SysCron, error) {
 	}
 
 	return crons, nil
+}
+
+/*
+DelCronByKeys func(cronID int, cronName string, cronUUID string) error
+*/
+func DelCronByKeys(cronID int, cronName string, cronUUID string) error {
+	cron := new(SysCron)
+	cron.CronId = cronID
+	cron.CronName = cronName
+	cron.CronUuid = cronUUID
+
+	affected, err := utils.Engine.Delete(cron)
+	if err != nil {
+		// seelog.Errorf("utils.Engine.Delete Error : %v", err)
+		return err
+	}
+	seelog.Debugf("%v delete : %v", affected, cron)
+
+	return nil
 }

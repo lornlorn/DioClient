@@ -2,6 +2,7 @@ package handler
 
 import (
 	"app/models"
+	"app/scheduler"
 	"app/utils"
 	"fmt"
 	"net/http"
@@ -58,12 +59,64 @@ func CronAddHandler(res http.ResponseWriter, req *http.Request) {
 
 	err := cron.Save()
 	if err != nil {
-		seelog.Errorf("数据库写入失败 : %v", err.Error())
+		seelog.Errorf("Set Cron Job -> Write DB Fail : %v", err.Error())
 		ret = utils.GetAjaxRetJSON("9999", err)
-	} else {
-		seelog.Debug("定时任务新增成功 ...")
-		ret = utils.GetAjaxRetJSON("0000", nil)
+		res.Write(ret)
+		return
 	}
+
+	err = scheduler.AddCronJob(cron)
+	if err != nil {
+		seelog.Errorf("Set Cron Job -> Register Job Fail : %v", err.Error())
+		ret = utils.GetAjaxRetJSON("9999", err)
+		cron.Delete()
+		res.Write(ret)
+		return
+	}
+
+	seelog.Debug("Set Cron Job Success ...")
+	ret = utils.GetAjaxRetJSON("0000", nil)
+
+	res.Write(ret)
+	return
+}
+
+// CronDeleteHandler func(res http.ResponseWriter, req *http.Request)
+func CronDeleteHandler(res http.ResponseWriter, req *http.Request) {
+
+	seelog.Infof("Route CronAdd : %v", req.URL)
+	// key := mux.Vars(req)["key"]
+
+	reqBody := utils.ReadRequestBody2JSON(req.Body)
+	seelog.Debugf("Request Body : %v", string(reqBody))
+
+	reqURL := req.URL.Query()
+	seelog.Debugf("Request Params : %v", reqURL)
+
+	cronName := utils.GetJSONResultFromRequestBody(reqBody, "data.CronName")
+
+	seelog.Debugf("Delete Request CronName : [%v]", cronName.String())
+
+	var cron models.NewCron
+
+	cron = models.NewCron{
+		CronName: cronName.String(),
+	}
+
+	var ret []byte
+
+	err := cron.Delete()
+	if err != nil {
+		seelog.Errorf("Unset Cron Job -> Write DB Fail : %v", err.Error())
+		ret = utils.GetAjaxRetJSON("9999", err)
+		res.Write(ret)
+		return
+	}
+
+	scheduler.DelCronJob(cron)
+
+	seelog.Debug("Job Stop And Unregister Success ...")
+	ret = utils.GetAjaxRetJSON("0000", nil)
 
 	res.Write(ret)
 	return

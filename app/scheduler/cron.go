@@ -8,9 +8,12 @@ import (
 	"github.com/rfyiamcool/cronlib"
 )
 
+// Cron global CronScheduler
+var Cron *cronlib.CronSchduler
+
 // InitCron func()
 func InitCron() error {
-	cron := cronlib.New()
+	Cron = cronlib.New()
 
 	crons, err := models.GetCrons()
 	if err != nil {
@@ -40,14 +43,61 @@ func InitCron() error {
 			return err
 		}
 
-		err = cron.Register(cronName, job)
+		err = Cron.Register(cronName, job)
 		if err != nil {
 			seelog.Errorf("Cron Register Error : %v", err.Error())
 			return err
 		}
 	}
 
-	cron.Start()
+	Cron.Start()
 	// cron.Join()
 	return nil
+}
+
+// AddCronJob func(cron models.NewCron) error
+func AddCronJob(cron models.NewCron) error {
+	seelog.Debugf("Set New Job : %v", cron)
+	cronName := cron.CronName
+	cronSpec := cron.CronSpec
+	cronEnvs := strings.Split(cron.CronEnvs, " ")
+	cronCmd := cron.CronCmd
+	cronArgs := strings.Split(cron.CronArgs, " ")
+	cronUuid := cron.CronUuid
+
+	job, err := cronlib.NewJobModel(
+		cronSpec,
+		func() {
+			Execute("cron", cronUuid, cronCmd, cronEnvs, cronArgs...)
+		},
+		cronlib.AsyncMode(),
+	)
+	if err != nil {
+		seelog.Errorf("Cron Set Fail : [%v]", cronName)
+		return err
+	}
+
+	err = Cron.UpdateJobModel(cronName, job)
+	if err != nil {
+		seelog.Errorf("Cron Register Error : %v", err.Error())
+		return err
+	}
+
+	return nil
+}
+
+// DelCronJob func(cron models.NewCron)
+func DelCronJob(cron models.NewCron) {
+	StopCronJob(cron.CronName)
+	UnregisterCronJob(cron.CronName)
+}
+
+// StopCronJob func(cronName string)
+func StopCronJob(cronName string) {
+	Cron.StopService(cronName)
+}
+
+// UnregisterCronJob func(cronName string)
+func UnregisterCronJob(cronName string) {
+	Cron.UnRegister(cronName)
 }

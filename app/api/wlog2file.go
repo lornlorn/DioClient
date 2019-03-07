@@ -5,8 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"runtime"
-
-	"github.com/cihub/seelog"
 )
 
 // WriteRunLog2File func(nowTime time.Time, cmd string) error
@@ -24,7 +22,7 @@ func WriteRunLog2File(uuid string, content []byte, beginTimeStr string, endTimeS
 	// fileBaseName := filepath.Base(cmd)
 	logFileDir := utils.GetConfig("app", "logdir")
 	logFilePath := fmt.Sprintf("%v/%v.log", logFileDir, UUID)
-	seelog.Debugf("写入执行结果日志 : %v", logFilePath)
+	// seelog.Debugf("写入执行结果日志 : %v", logFilePath)
 
 	var head []byte
 	var tail []byte
@@ -46,7 +44,7 @@ func WriteRunLog2File(uuid string, content []byte, beginTimeStr string, endTimeS
 	// err := utils.WriteFile(logFilePath, data)
 	err := utils.AppendFile(logFilePath, data)
 	if err != nil {
-		seelog.Errorf("执行结果日志写入失败 : %v", err.Error())
+		// seelog.Errorf("执行结果日志写入失败 : %v", err.Error())
 		return "", err
 	}
 	return logFilePath, nil

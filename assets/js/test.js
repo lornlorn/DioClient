@@ -93,4 +93,37 @@ $(function () {
             },
         });
     });
+
+    // 删除cron
+    $('#CronDelete_submit').click(function () {
+        var params = {};
+        params['from'] = 'test';
+        params['data'] = {};
+        params['data']['CronName'] = $('#CronName').val();
+
+        console.log('REQUEST : ' + JSON.stringify(params));
+
+        $.ajax({
+            // url: '/test/ajax',
+            url: '/cron',
+            type: 'DELETE',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(params),
+            async: 'true',
+            dataType: 'json',
+            success: function (result) {
+                console.log('RESPONSE : ' + JSON.stringify(result));
+                console.log("请求成功");
+                // alert('成功');
+                // window.close();
+                $('#CronRet').val(JSON.stringify(result));
+            },
+            error: function (result) {
+                console.log("请求失败");
+            },
+            complete: function () {
+                console.log("Ajax finish");
+            },
+        });
+    });
 });

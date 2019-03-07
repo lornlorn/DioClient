@@ -15,6 +15,7 @@ import (
 
 // Execute func(src string, command string, envs []string, args ...string) ([]byte, error)
 func Execute(src string, uuid string, command string, envs []string, args ...string) ([]byte, error) {
+	seelog.Debug("Execute Job ...")
 	nowTime := time.Now()
 	timeFormat := "2006-01-02 15:04:05" // 时间格式化模板
 	nowTimeStr := nowTime.Format(timeFormat)
@@ -43,21 +44,23 @@ func Execute(src string, uuid string, command string, envs []string, args ...str
 	} else {
 		result = output
 	}
+	seelog.Trace(string(result))
 
 	logFilePath, err := api.WriteRunLog2File(uuid, result, beginTimeStr, endTimeStr)
 	if err != nil {
-		seelog.Errorf("执行结果日志写入失败 : %v", err.Error())
-		sysLog.LogfilePath = fmt.Sprintf("执行结果日志写入失败 : %v", err.Error())
+		seelog.Errorf("Write Run Log Fail : %v", err.Error())
+		sysLog.LogfilePath = fmt.Sprintf("Write Run Log Fail : %v", err.Error())
 	} else {
 		sysLog.LogfilePath = logFilePath
 	}
+	seelog.Debugf("Write Run Log : %v", logFilePath)
 
 	sysLog.RunStatus = "成功"
 	sysLog.RunMsg = string(result)
 
 	err = sysLog.Save()
 	if err != nil {
-		seelog.Errorf("数据库写入失败 : %v", err.Error())
+		seelog.Errorf("Write DB Run Log Fail : %v", err.Error())
 	}
 
 	return result, nil
