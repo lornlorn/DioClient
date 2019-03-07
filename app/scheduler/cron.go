@@ -101,3 +101,34 @@ func StopCronJob(cronName string) {
 func UnregisterCronJob(cronName string) {
 	Cron.UnRegister(cronName)
 }
+
+// UpdateCronJob func(cron models.NewCron) error
+func UpdateCronJob(cron models.NewCron) error {
+	seelog.Debugf("Update Job : %v", cron)
+	cronName := cron.CronName
+	cronSpec := cron.CronSpec
+	cronEnvs := strings.Split(cron.CronEnvs, " ")
+	cronCmd := cron.CronCmd
+	cronArgs := strings.Split(cron.CronArgs, " ")
+	cronUuid := cron.CronUuid
+
+	job, err := cronlib.NewJobModel(
+		cronSpec,
+		func() {
+			Execute("cron", cronUuid, cronCmd, cronEnvs, cronArgs...)
+		},
+		cronlib.AsyncMode(),
+	)
+	if err != nil {
+		seelog.Errorf("Cron Update Fail : [%v]", cronName)
+		return err
+	}
+
+	err = Cron.UpdateJobModel(cronName, job)
+	if err != nil {
+		seelog.Errorf("Cron Register Error : %v", err.Error())
+		return err
+	}
+
+	return nil
+}

@@ -65,6 +65,18 @@ func (cron NewCron) Delete() error {
 	return nil
 }
 
+// UpdateByUUID method
+func (cron NewCron) UpdateByUUID() error {
+	affected, err := utils.Engine.Where("cron_name=? and cron_uuid=?",cron.CronName,cron.CronUuid).Update(cron)
+	if err != nil {
+		// seelog.Errorf("utils.Engine.ID.Update Error : %v", err)
+		return err
+	}
+	seelog.Debugf("%v update : %v", affected, cron)
+
+	return nil
+}
+
 /*
 GetCrons func() ([]SysCron, error)
 */

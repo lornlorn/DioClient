@@ -100,6 +100,7 @@ $(function () {
         params['from'] = 'test';
         params['data'] = {};
         params['data']['CronName'] = $('#CronName').val();
+        params['data']['CronUuid'] = $('#CronUuid').val();
 
         console.log('REQUEST : ' + JSON.stringify(params));
 
@@ -126,4 +127,57 @@ $(function () {
             },
         });
     });
+
+    // 更新cron
+    $('#CronUpdate_submit').click(function () {
+        var params = {};
+        params['from'] = 'test';
+        params['data'] = {};
+        params['data']['CronEnvs'] = [];
+        params['data']['CronArgs'] = [];
+
+        params['data']['CronName'] = $('#CronName').val();
+        params['data']['CronSpec'] = $('#CronSpec').val();
+
+        var dict = {};
+        dict['CronEnv1'] = $('#CronEnv1').val();
+        dict['CronEnv2'] = $('#CronEnv2').val();
+        params['data']['CronEnvs'].push(dict['CronEnv1']);
+        params['data']['CronEnvs'].push(dict['CronEnv2']);
+        params['data']['CronCmd'] = $('#CronCmd').val();
+        dict['CronArg1'] = $('#CronArg1').val();
+        dict['CronArg2'] = $('#CronArg2').val();
+        params['data']['CronArgs'].push(dict['CronArg1']);
+        params['data']['CronArgs'].push(dict['CronArg2']);
+
+        params['data']['CronStatus'] = $('#CronStatus').val();
+        params['data']['CronDesc'] = $('#CronDesc').val();
+        params['data']['CronUuid'] = $('#CronUuid').val();
+
+        console.log('REQUEST : ' + JSON.stringify(params));
+
+        $.ajax({
+            // url: '/test/ajax',
+            url: '/cron',
+            type: 'PUT',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(params),
+            async: 'true',
+            dataType: 'json',
+            success: function (result) {
+                console.log('RESPONSE : ' + JSON.stringify(result));
+                console.log("请求成功");
+                // alert('成功');
+                // window.close();
+                $('#CronRet').val(JSON.stringify(result));
+            },
+            error: function (result) {
+                console.log("请求失败");
+            },
+            complete: function () {
+                console.log("Ajax finish");
+            },
+        });
+    });
+
 });
