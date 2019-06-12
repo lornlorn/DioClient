@@ -4,7 +4,8 @@
             <console/>
         </splitter>
         <splitter formatid="logfile">
-            <rollingfile type="date" filename="./logs/DioClient.log" datepattern="20060102" fullname="true" maxrolls="31" />
+            <rollingfile type="date" filename="./logs/DioClient.log" datepattern="20060102" fullname="true"
+                         maxrolls="31"/>
             <!--
             <buffered size="10000" flushperiod="1000">
                 <rollingfile type="date" filename="./log/dlagent.log" datepattern="20060102" fullname="true" maxrolls="31" />
@@ -20,7 +21,7 @@
         </filter> -->
     </outputs>
     <formats>
-        <format id="console" format="%Date %Time [%Level] [%RelFile:%Line] [%Func] %Msg%n" />
-        <format id="logfile" format="%Date %Time [%Level] [%RelFile:%Line] [%Func] %Msg%n" />
+        <format id="console" format="%Date %Time [%Level] [%RelFile:%Line] [%Func] %Msg%n"/>
+        <format id="logfile" format="%Date %Time [%Level] [%RelFile:%Line] [%Func] %Msg%n"/>
     </formats>
 </seelog>
