@@ -2,6 +2,7 @@ package models
 
 import (
     "app/utils"
+    "errors"
 
     "github.com/cihub/seelog"
 )
@@ -56,11 +57,15 @@ func (cron NewCron) Save() error {
 
 // Delete method
 func (cron NewCron) Delete() error {
-    affected, err := utils.Engine.Delete(cron)
+    affected, err := utils.Engine.Where("cron_name=? and cron_uuid=?", cron.CronName, cron.CronUuid).Delete(cron)
     if err != nil {
         return err
     }
     seelog.Debugf("%v delete : %v", affected, cron)
+
+    if affected == 0{
+        return errors.New("0 updated, nothing changed")
+    }
 
     return nil
 }
@@ -73,6 +78,10 @@ func (cron NewCron) UpdateByUUID() error {
         return err
     }
     seelog.Debugf("%v update : %v", affected, cron)
+
+    if affected == 0{
+        return errors.New("0 updated, nothing changed")
+    }
 
     return nil
 }

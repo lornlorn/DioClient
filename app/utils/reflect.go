@@ -22,7 +22,7 @@ InitFunctionMap func()
 */
 func InitFunctionMap(objs ...interface{}) {
 
-    // var ajaxapi api.API
+    // var ajaxapi udfuncs.API
     FuncMap = make(FunctionMap, 0)
 
     for idx, obj := range objs {

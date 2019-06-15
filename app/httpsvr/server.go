@@ -38,7 +38,7 @@ func initRoutes(r *mux.Router) {
     r.HandleFunc("/cron", handler.CronDeleteHandler).Methods("DELETE")
     r.HandleFunc("/cron", handler.CronUpdateHandler).Methods("PUT")
     r.HandleFunc("/test", handler.TestHandler).Methods("GET")
-    r.HandleFunc("/test/ajax", handler.TestAjaxHandler).Methods("POST")
+    //r.HandleFunc("/test/ajax", handler.TestAjaxHandler).Methods("POST")
 
     // static resource router
     r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))

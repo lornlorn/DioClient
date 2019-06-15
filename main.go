@@ -49,7 +49,7 @@ func main() {
     	客户端暂时停用
     	// Init Reflect Functions
     	msg = "3 -> Initialize Reflect Function Map"
-    	api.InitAPIFuncMap()
+    	udfuncs.InitAPIFuncMap()
     	seelog.Infof("%v Success !", msg)
     */
 
