@@ -4,6 +4,7 @@ import (
     "app/httpsvr/handler"
     "net/http"
     "time"
+    "fmt"
 
     "github.com/cihub/seelog"
     "github.com/gorilla/mux"
@@ -12,16 +13,19 @@ import (
 /*
 StartHTTP func()
 */
-func StartHTTP() error {
+func StartHTTP(httpPort int, writeTimeout int, readTimeout int) error {
     r := mux.NewRouter().StrictSlash(true)
     initRoutes(r)
     seelog.Info("Initialize HTTP Routers Success !")
 
     svr := &http.Server{
         Handler:      r,
-        Addr:         ":5678",
-        WriteTimeout: 5 * time.Second,
-        ReadTimeout:  5 * time.Second,
+        // Addr:         ":5678",
+        // WriteTimeout: 600 * time.Second,
+        // ReadTimeout:  10 * time.Second,
+        Addr:          fmt.Sprintf(":%v", httpPort),
+        WriteTimeout:  time.Duration(writeTimeout) * time.Second,
+        ReadTimeout:   time.Duration(readTimeout) * time.Second,
     }
 
     seelog.Info("Listen HTTP Port And Serve ...")

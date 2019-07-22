@@ -21,7 +21,7 @@ const (
 func main() {
     //这里实现了远程获取pprof数据的接口
     go func() {
-        log.Println(http.ListenAndServe("localhost:8765", nil))
+        log.Println(http.ListenAndServe(":9999", nil))
     }()
 
     var err error
@@ -79,7 +79,10 @@ func main() {
     seelog.Infof("%v !", msg)
     seelog.Info("***Everything is OK !***")
     // log.Fatalln(httpsvr.StartHTTP())
-    err = httpsvr.StartHTTP()
+    httpPort := utils.GetConfigInt("http", "httpport")
+    writeTimeout := utils.GetConfigInt("http", "writetimeout")
+    readTimeout := utils.GetConfigInt("http", "readtimeout")
+    err = httpsvr.StartHTTP(httpPort, writeTimeout, readTimeout)
     if err != nil {
         seelog.Criticalf("%v Error : %v", msg, err)
         panic("Exit!")
