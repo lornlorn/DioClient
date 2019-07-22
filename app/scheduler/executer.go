@@ -1,8 +1,8 @@
 package scheduler
 
 import (
-    "app/udfuncs"
     "app/models"
+    "app/udfuncs"
     "app/utils"
     "fmt"
     "os/exec"

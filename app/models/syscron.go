@@ -63,7 +63,7 @@ func (cron NewCron) Delete() error {
     }
     seelog.Debugf("%v delete : %v", affected, cron)
 
-    if affected == 0{
+    if affected == 0 {
         return errors.New("0 updated, nothing changed")
     }
 
@@ -79,7 +79,7 @@ func (cron NewCron) UpdateByUUID() error {
     }
     seelog.Debugf("%v update : %v", affected, cron)
 
-    if affected == 0{
+    if affected == 0 {
         return errors.New("0 updated, nothing changed")
     }
 

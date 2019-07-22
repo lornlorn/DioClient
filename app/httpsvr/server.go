@@ -2,9 +2,9 @@ package httpsvr
 
 import (
     "app/httpsvr/handler"
+    "fmt"
     "net/http"
     "time"
-    "fmt"
 
     "github.com/cihub/seelog"
     "github.com/gorilla/mux"
@@ -20,12 +20,9 @@ func StartHTTP(httpPort int, writeTimeout int, readTimeout int) error {
 
     svr := &http.Server{
         Handler:      r,
-        // Addr:         ":5678",
-        // WriteTimeout: 600 * time.Second,
-        // ReadTimeout:  10 * time.Second,
-        Addr:          fmt.Sprintf(":%v", httpPort),
-        WriteTimeout:  time.Duration(writeTimeout) * time.Second,
-        ReadTimeout:   time.Duration(readTimeout) * time.Second,
+        Addr:         fmt.Sprintf(":%v", httpPort),
+        WriteTimeout: time.Duration(writeTimeout) * time.Second,
+        ReadTimeout:  time.Duration(readTimeout) * time.Second,
     }
 
     seelog.Info("Listen HTTP Port And Serve ...")
